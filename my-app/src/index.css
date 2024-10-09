@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+ul,
+li {
+  list-style: none;
+}
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1024px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.list_wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 10px;
+  padding: 1rem;
+}
+
+.list_item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1/1;
+}
+
+.list_item:hover {
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.35);
+}
+
+.list_item:hover::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.list_item:active::before {
+  box-shadow: none;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.list_item > img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center;
+}
+
+#modalRoot {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#modalRoot.active {
+  display: flex;
+}
+
+#modalContainer {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  position: absolute;
+  width: 500px;
+  height: auto;
+}
+
+#modalContainer > img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
+
+#modalOverlay {
+  width: 100vw;
+  height: 150vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.form {
+  display: none;
+}
