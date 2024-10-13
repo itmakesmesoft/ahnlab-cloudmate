@@ -5,19 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>고양이 리스트</title>
   </head>
-  <body>
-    <div class="container">
-      <header>고양이 리스트</header>
-      <input type="text" id="search" placeholder="고양이를 검색하세요. (tag)" />
-      <select name="filter" id="filter"></select>
-      <ul class="list_wrapper"></ul>
-      <!-- <button id="loadMoreBtn">불러오기</button> -->
-    </div>
-    <footer id="footer" style="height: 100px; width: 100%"></footer>
-    <div id="modalRoot">
-      <div id="modalOverlay"></div>
-      <div id="modalContainer"></div>
-    </div>
+  <body style="overflow-y: scroll">
+    <div id="app"></div>
+    <div id="modalRoot"></div>
     <script src="/bundle.js"></script>
   </body>
 </html>

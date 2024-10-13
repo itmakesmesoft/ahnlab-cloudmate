@@ -108,7 +108,7 @@ def convert_data(data):
     item = item.replace("'", '"')
     item = json.loads(item)
     name = get_breed_name(item["breed_id"])
-    converted.append({"id":item["id"], "breed_id": item["breed_id"], "url": item["url"], "title": "", "name": name, "tags": [], "isLiked": False, "likesCount": 0})
+    converted.append({"id":item["id"], "breedId": item["breed_id"], "url": item["url"], "title": "", "name": name, "tags": [], "isLiked": False, "likesCount": 0})
   return converted
 
 

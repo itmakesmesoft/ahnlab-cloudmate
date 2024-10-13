@@ -2,66 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-ul,
-li {
-  list-style: none;
-}
-* {
-  padding: 0;
-  margin: 0;
-}
-
-.container {
-  width: 100%;
-  max-width: 1024px;
-  height: auto;
-  margin: 0 auto;
-}
-
-.list_wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 10px;
-  padding: 1rem;
-}
-
-.list_item {
-  position: relative;
-  overflow: hidden;
-  border-radius: 10px;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1/1;
-}
-
-.list_item:hover {
-  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.35);
-}
-
-.list_item:hover::before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.list_item:active::before {
-  box-shadow: none;
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.list_item > img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  object-position: center;
-}
-
 #modalRoot {
   display: none;
   position: fixed;
@@ -69,6 +9,7 @@ li {
   left: 0;
   width: 100vw;
   height: 100vh;
+  z-index: 30;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -78,31 +19,36 @@ li {
   display: flex;
 }
 
-#modalContainer {
-  background: white;
-  border-radius: 10px;
-  padding: 1rem;
-  position: absolute;
-  width: 500px;
-  height: auto;
-}
-
-#modalContainer > img {
+.skeleton-item {
   width: 100%;
   height: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
+  border-radius: 4px;
+  background-color: #eee;
+  background: linear-gradient(110deg, #ececec 35%, #f5f5f5 50%, #ececec 65%);
+  background-size: 200% 100%;
+  animation: 1.7s skeletonGradientWave linear infinite;
 }
 
-#modalOverlay {
-  width: 100vw;
-  height: 150vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.5);
+.loader {
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 3px solid #959b9c;
+  border-right: 3px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
 }
 
-.form {
-  display: none;
+@keyframes skeletonGradientWave {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

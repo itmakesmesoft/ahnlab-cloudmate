@@ -14,7 +14,7 @@ export const getImageList = async ({ breedId = null, page = 0 }) => {
   }
 };
 
-export const getImageDetail = async (id) => {
+export const getImageDetail = async (id: string) => {
   try {
     const url = `${API_URL}/${id}`;
     const response = await fetch(url, { headers: DEFAULT_HEADERS });
