@@ -58,13 +58,11 @@
 
 ### 무한스크롤 :
 
-
-
-
 - IntersectionObserverAPI를 이용한 무한 스크롤 구현
 - footer에 50% 만큼 교차하는 경우 데이터 패치 요청
 
 ### 모달 구현
+
 ![모달 클릭](https://github.com/user-attachments/assets/eaabbd48-31ae-473c-b5a4-a428a7b18d6c)
 
 - 이미지 클릭 시 해당 이미지의 상세 정보 표시
@@ -77,11 +75,12 @@
 - 페이지를 첫 렌더링하기 이전, 비동기적으로 데이터를 불러오는 시점에 스켈레톤 UI 표시
 - 페이지를 마운트 한 이후, 비동기적으로 데이터를 불러오는 시점에 사용자에게 로딩 스피너 표시
 
-### Debounce 적용
+### Debounce, Throttle 적용
 
 ![디바운싱](https://github.com/user-attachments/assets/75464f82-ffbb-436b-98e4-db054cd74df4)
 
-- 검색창에 태그를 입력하고 엔터를 누르지않은 상태로 2초동안 입력이 없는 경우, 검색 결과가 나오도록 debounce 적용
+- 검색창에 태그를 입력한 후 엔터를 누르지 않고 2초간 입력이 없을 경우, 검색 결과를 표시하도록 디바운스 적용
+- 무한 스크롤 시 첫 번째 요청만 수행되며, 500ms 이내에 추가 요청은 무시되도록 쓰로틀링 적용
 
 ### 태그 검색 및 필터링 기능
 
@@ -94,7 +93,6 @@
 
 ![좋아요 기능](https://github.com/user-attachments/assets/cbe119de-0aa1-4259-a3f6-143208c1ad20)
 
-
 - 각 이미지에 좋아요 표시 기능
 - firestore를 이용하여 게시글에 좋아요를 눌렀는지 여부와 좋아요 수를 카운트하는 필드를 만들고 이미지 정보를 불러올 때 함께 반환하도록 설계
 - 좋아요가 DB에 반영되는 동안 로딩 스피너가 표시되도록 구현
@@ -102,10 +100,13 @@
 ### Firebase 데이터베이스
 
 ![image](https://github.com/user-attachments/assets/aa71f215-5a3f-47a2-af94-a73c59d3cbed)
+
 - 이미지를 관리하고 검색 및 태그 필터링 처리
 
 ### 컴포넌트 기반 아키텍처 설계, 라이프사이클 및 라우팅 구현
+
 [코드 바로 보기](https://github.com/itmakesmesoft/ahnlab-cloudmate/blob/5435525c076d05db9000c0a316a3537d446c716a/my-app/src/utils/common.ts#L8)
+
 - 코드의 재사용성 및 유지보수성을 극대화
 - 라이프사이클에 따른 동작 처리 가능
 - 페이지 전환 시 서버로부터 새로운 페이지를 로드하지 않고, 자바스크립트를 이용하여 동적으로 컨텐츠를 교체
