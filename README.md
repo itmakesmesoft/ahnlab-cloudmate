@@ -105,9 +105,7 @@
 - 이미지를 관리하고 검색 및 태그 필터링 처리
 
 ### 컴포넌트 기반 아키텍처 설계, 라이프사이클 및 라우팅 구현
-
-![image](https://github.com/user-attachments/assets/5160ef81-4377-4857-abd8-53f58fca8bf1)
-
+[코드 바로 보기](https://github.com/itmakesmesoft/ahnlab-cloudmate/blob/5435525c076d05db9000c0a316a3537d446c716a/my-app/src/utils/common.ts#L8)
 - 코드의 재사용성 및 유지보수성을 극대화
 - 라이프사이클에 따른 동작 처리 가능
 - 페이지 전환 시 서버로부터 새로운 페이지를 로드하지 않고, 자바스크립트를 이용하여 동적으로 컨텐츠를 교체
