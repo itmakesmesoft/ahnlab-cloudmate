@@ -1,0 +1,54 @@
+{
+  "name": "ahnlab-cloudmate",
+  "version": "1.0.0",
+  "description": "안랩 클라우드메이트 FE 과제전형 by 이은혁",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve --open",
+    "build": "rm -rf ./dist && webpack build --config ./webpack.config.js --stats verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itmakesmesoft/ahnlab-cloudmate.git"
+  },
+  "author": {
+    "name": "Eunhyeok Lee",
+    "email": "dmsgur7112@gamil.com",
+    "url": "https://github.com/itmakesmesoft"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itmakesmesoft/ahnlab-cloudmate/issues"
+  },
+  "homepage": "./",
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "@types/node": "^22.7.4",
+    "@typescript-eslint/eslint-plugin": "^8.8.1",
+    "@typescript-eslint/parser": "^8.8.1",
+    "autoprefixer": "^10.4.20",
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^7.1.2",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "firebase": "10.13.1",
+    "globals": "^15.11.0",
+    "html-webpack-plugin": "^5.6.0",
+    "postcss": "^8.4.47",
+    "postcss-loader": "^8.1.1",
+    "prettier": "^3.3.3",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.13",
+    "ts-loader": "^9.5.1",
+    "typescript-eslint": "^8.8.1",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0"
+  },
+  "dependencies": {
+    "typescript": "^5.6.3"
+  }
+}
