@@ -31,6 +31,7 @@
 # 1. 아키텍처
 
 프로젝트 아키텍처
+![아키텍쳐](https://github.com/user-attachments/assets/259c1d7f-4ec5-46f2-a923-929c6c1a0b7b)
 
 폴더 구조
 
@@ -57,49 +58,61 @@
 # 2. 구현사항
 
 ### 무한스크롤 :
+![무한스크롤](https://github.com/user-attachments/assets/e3a15981-8c2c-4037-8c9a-b35805845b84)
 
 - IntersectionObserverAPI를 이용한 무한 스크롤 구현
 - footer에 50% 만큼 교차하는 경우 데이터 패치 요청
 
 ### 모달 구현
+![모달 클릭](https://github.com/user-attachments/assets/b245f207-4691-49a4-bcd3-7ada4108cf10)
+![모달 끄기](https://github.com/user-attachments/assets/a37f9451-ee60-49d1-ae63-a5f12783f09b)
 
-![모달 클릭](https://github.com/user-attachments/assets/eaabbd48-31ae-473c-b5a4-a428a7b18d6c)
 
 - 이미지 클릭 시 해당 이미지의 상세 정보 표시
 - 모달 우측 상단 X 버튼 또는 모달 바깥 클릭 시 모달 닫기 구현
 
 ### 로딩 스피너 및 스켈레톤 UI
 
-![스켈레톤 ui](https://github.com/user-attachments/assets/c4f86c85-3130-4fce-8ab0-a7498ffd88cf)
+![스켈레톤 ui](https://github.com/user-attachments/assets/9a1fe05a-ce1c-4b57-a142-17bb4c70c507)
+
 
 - 페이지를 첫 렌더링하기 이전, 비동기적으로 데이터를 불러오는 시점에 스켈레톤 UI 표시
 - 페이지를 마운트 한 이후, 비동기적으로 데이터를 불러오는 시점에 사용자에게 로딩 스피너 표시
 
 ### Debounce, Throttle 적용
 
-![디바운싱](https://github.com/user-attachments/assets/75464f82-ffbb-436b-98e4-db054cd74df4)
+![디바운싱](https://github.com/user-attachments/assets/f3d831ff-e32b-415f-bdcf-4e7bcb762a06)
+
 
 - 검색창에 태그를 입력한 후 엔터를 누르지 않고 2초간 입력이 없을 경우, 검색 결과를 표시하도록 디바운스 적용
 - 무한 스크롤 시 첫 번째 요청만 수행되며, 500ms 이내에 추가 요청은 무시되도록 쓰로틀링 적용
 
 ### 태그 검색 및 필터링 기능
 
-![태그 검색 및 필터링](https://github.com/user-attachments/assets/e09ba297-c74a-4174-b6ae-50425657abac)
+![태그 인풋](https://github.com/user-attachments/assets/86b6aa66-f5a9-4c39-8552-0254a43bb4ce)
 
 - python을 이용해 TheCatAPI의 데이터를 크롤링한 뒤, firestore에 태그 및 제목 등의 정보와 함께 저장
 - 태그를 통해 고양이 이미지를 검색하거나, 고양이 종류를 통해 필터링이 가능
 
-### 좋아요 기능
+### 좋아요
 
-![좋아요 기능](https://github.com/user-attachments/assets/cbe119de-0aa1-4259-a3f6-143208c1ad20)
+![좋아요 기능](https://github.com/user-attachments/assets/26ee68b6-a4ed-4133-9170-05b899ce895d)
+
 
 - 각 이미지에 좋아요 표시 기능
 - firestore를 이용하여 게시글에 좋아요를 눌렀는지 여부와 좋아요 수를 카운트하는 필드를 만들고 이미지 정보를 불러올 때 함께 반환하도록 설계
 - 좋아요가 DB에 반영되는 동안 로딩 스피너가 표시되도록 구현
 
+### 게시글 수정
+
+![게시글 수정 기능](https://github.com/user-attachments/assets/aa52bbc3-8746-479f-98f3-99b50da8c972)
+
+- firebase를 통해 게시글의 제목, 태그 정보를 저장하도록 구현
+- 태그 Input을 제작하여 손쉽게 태그 추가하도록 구현
+
 ### Firebase 데이터베이스
 
-![image](https://github.com/user-attachments/assets/aa71f215-5a3f-47a2-af94-a73c59d3cbed)
+<img width="491" alt="스크린샷 2024-10-14 225318" src="https://github.com/user-attachments/assets/fe2bc591-d234-4f30-8617-27d89b52bc18">
 
 - 이미지를 관리하고 검색 및 태그 필터링 처리
 
