@@ -12,7 +12,12 @@ import {
   limit,
   where,
   updateDoc,
+  DocumentData,
 } from "firebase/firestore";
+
+let lastVisible: DocumentData | undefined | number;
+let breedId: string | undefined;
+let keyword: string | undefined;
 
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
@@ -38,21 +43,21 @@ export interface ImageDataInterface {
   tags: string[];
 }
 
+// 글 수정 등록
 export const submitPost = async (formData: ImageDataInterface) => {
   const postRef = doc(database, "cats", formData.id); // 문서 참조 생성
   console.log(formData);
   return await setDoc(postRef, { ...formData }, { merge: true });
 };
 
+// 데이터 가져오기
 export const getPost = async (id: string) => {
-  const postRef = doc(database, "cats", id); // 문서 참조 생성
-  const docSnap = await getDoc(postRef); // 문서 데이터 가져오기
-  if (docSnap.exists()) return docSnap.data(); // 문서 데이터
+  const postRef = doc(database, "cats", id);
+  const docSnap = await getDoc(postRef);
+  if (docSnap.exists()) return docSnap.data();
 };
 
-let lastVisible: any;
-let breedId: any;
-let keyword: any;
+// 데이터 여러개 가져오기
 export const getPosts = async (props: {
   breedId?: string;
   keyword?: string;
@@ -74,6 +79,7 @@ export const getPosts = async (props: {
     q = query(q, where("tags", "array-contains", props.keyword));
   }
 
+  // 만약 필터나 검색어가 변경되지 않은 상태에서 마지막 데이터인 경우 빈 배열 반환
   if (
     lastVisible === -1 &&
     props.keyword === keyword &&
@@ -97,26 +103,16 @@ export const getPosts = async (props: {
   return convertData(snapshot);
 };
 
-const convertData = (snapshot: any) => {
-  const convert = snapshot.docs.map((doc: any) => ({
+// 데이터 변환
+const convertData = (snapshot: DocumentData) => {
+  const convert = snapshot.docs.map((doc: DocumentData) => ({
     id: doc.id,
     ...doc.data(),
   })) as ImageDataInterface[];
   return convert;
 };
 
-// export const searchCat = async (keyword: string) => {
-//   const q = query(
-//     collection(database, "cats"),
-//     orderBy("tags"), // 제목 정렬
-//     startAt(keyword),
-//     endAt(keyword + "\uf8ff")
-//   );
-//   const data = await getDocs(q);
-//   data.docs.map((item) => item.data());
-//   return data.docs;
-// };
-
+// 게시글 좋아요
 export const likePost = async (id: string) => {
   const postRef = doc(database, "cats", id);
   const post = await getDoc(postRef).then((res) => res.data());

@@ -4,15 +4,17 @@
 // afterUpdate: 컴포넌트가 업데이트된 후 호출.
 // componentWillUnmount: 컴포넌트가 언마운트 되기 전에 호출.
 
-export default class Component {
+// 컴포넌트 클래스
+export default class Component<P = object, S = object> {
   parent: Element | null | undefined;
-  props: any;
-  state: any = {};
+  props: P;
+  state: S;
   isMounted: boolean = false;
 
-  constructor(parent?: Element | null, props?: any) {
+  constructor(parent?: Element | null, props?: unknown) {
     this.parent = parent;
-    this.props = props;
+    this.props = props as P;
+    this.state = {} as S;
     this.setup();
     this.update();
   }
@@ -42,7 +44,7 @@ export default class Component {
 
   afterUpdate() {}
 
-  Unmount() {}
+  unMounted() {}
 
   template() {
     return ``;
@@ -50,39 +52,51 @@ export default class Component {
 
   setEvents() {}
 
-  setState(newState: any) {
+  setState(newState: unknown) {
     if (JSON.stringify(this.state) !== JSON.stringify(newState)) {
       // 상태가 변경되었을 때만 render 호출
-      this.state = { ...this.state, ...newState };
+      this.state = { ...this.state, ...(newState || {}) };
       this.update();
     }
   }
 }
 
+// 크로스 사이트 스크립팅 공격 방지용(모든 사용자 인풋을 감쌀 것)
 export const escapeFromXSS = (propValue?: string) => {
-  const escaper = document.createElement("div");
+  const escaper = document.createElement('div');
   if (propValue) escaper.textContent = propValue; // propValue에 태그가 포함되는 경우, 이를 문자열로 치환시키기 위함
   return escaper.innerHTML;
 };
 
-export const debounce = (callback: any, delay = 300) => {
+// 디바운스(delay 시간 이후에 한 번만 callback 실행)
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const debounce = <T extends any[]>(
+  callback: (...args: T) => void,
+  delay = 1000
+) => {
   let timer: NodeJS.Timeout | null;
-  return (...args: any[]) => {
-    timer && clearTimeout(timer);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (...args: T) => {
+    if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       callback(...args);
     }, delay);
   };
 };
-
-export const throttle = (callback: any, delay = 1000) => {
-  let timer: NodeJS.Timeout | null;
-  return (...args: any[]) => {
-    if (!timer) {
-      callback(...args);
-      timer = setTimeout(() => {
-        timer = null;
-      }, delay);
-    }
-  };
-};
+// 쓰로틀링(callback 실행 후 delay 시간동안 같은 요청 무시)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// export const throttle = <T extends any[]>(
+//   callback: (...args: T) => void,
+//   delay = 1000
+// ) => {
+//   let timer: NodeJS.Timeout | null;
+//   return (...args: T) => {
+//     if (!timer) {
+//       callback(...args);
+//       timer = setTimeout(() => {
+//         timer = null;
+//       }, delay);
+//     }
+//   };
+// };
