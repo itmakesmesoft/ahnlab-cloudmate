@@ -107,8 +107,8 @@ def convert_data(data):
   for item in data:
     item = item.replace("'", '"')
     item = json.loads(item)
-    name = get_breed_name(item["breed_id"])
-    converted.append({"id":item["id"], "breedId": item["breed_id"], "url": item["url"], "title": "", "name": name, "tags": [], "isLiked": False, "likesCount": 0})
+    name = get_breed_name(item["breedId"])
+    converted.append({"id":item["id"], "breedId": item["breedId"], "url": item["url"], "title": "", "name": name, "tags": [], "isLiked": False, "likesCount": 0})
   return converted
 
 
@@ -121,27 +121,31 @@ def get_breed_name(breed_id:str):
 
 def append_breed_id(arr, breed_id):
   for item in arr:
-    item["breed_id"] = breed_id # breed_id를 추가
+    item["breedId"] = breed_id # breed_id를 추가
   return deepcopy(arr)
 
 # api로 받는 데이터 형식
 # [{'id': '9x1zk_Qdr', 'url': 'https://cdn2.thecatapi.com/images/9x1zk_Qdr.jpg', 'width': 1204, 'height': 1107}]
 
 def get_images(breed_list):
-  API_HOST = 'https://api.thecatapi.com/v1/images/search?limit=10&size=thumb&mime_types=png&breed_ids='
+  API_HOST = 'https://api.thecatapi.com/v1/images/search?limit=10&size=thumb&mime_types=jpg&breed_ids='
   for item in breed_list:
     breed_id = item["id"]
     api = API_HOST + breed_id
-    print(api)
+    headers = {
+      "x-api-key": "live_f226Rvx4cp6S6MbMp2B4RliAqn8MgjNpy1kFer7lcpEEoxFm2bi5Zxq7iIJXRBSb", "Content-Type": "application/json",
+    }
+    # print(api, headers)
     result = []
     for _ in range(10):
-      response = requests.get(api)
+      response = requests.get(api, headers=headers)
       data = response.json()
-      print(data)
+      print("data", data)
       # data["breed_id"] = breed_id
       result += data
     print(breed_id, "완료")
-    convert_data(result)
+    save_array_as_file(result)
+    # convert_data(result)
 
 
 def save_array_as_file(arr, filepath="imageData.txt"):
@@ -150,6 +154,19 @@ def save_array_as_file(arr, filepath="imageData.txt"):
       file.write(str(item) + "\n")
   file.close()
 
+def get_low_images(filepath):
+  datas = read_data(filepath)
+  result = []
+  for data in datas:
+    item = data.replace("'", '"')
+    item = json.loads(item)
+    if item["width"] <1000 and item["height"] <1000:
+      print(item)
+      result.append(item)
+  save_array_as_file(result, "lowData.txt")
 
-save_array_as_file(convert_data(read_data("imageData.txt")), "converted.txt")
+
+# save_array_as_file(convert_data(read_data("imageData.txt")), "converted.txt")
 # get_images(breed_ids)
+# get_low_images("imageData.txt")
+save_array_as_file(convert_data(read_data("lowData.txt")), "lowDataResult.txt")

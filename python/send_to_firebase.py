@@ -1,4 +1,5 @@
 import json
+import time
 import firebase_admin
 from firebase_admin import credentials, firestore
 
@@ -28,7 +29,9 @@ with open("converted.txt", 'r') as file:
         print(i,"개 완료",sep="")
       # print("요청완료")
       item = json.loads(item.replace("'", '"'))
-      db.collection('cats').document(item["id"]).set(item)
+      # print(item)
+      res = db.collection('cats').document(item["id"]).set(item)
+      # print(res)
       i+=1
 # data = {
 #   "id": "sdf",
