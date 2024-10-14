@@ -1,8 +1,11 @@
-# <center>🐈 Catstagram</center>
 
-<center><b>for Ahnlab Cloudmate</b></center>
-<center>고양이 이미지 제공 서비스</center>
-<center></center>
+<div align="center">
+<h1>🐈 Catstagram</h1>
+<b>for Ahnlab Cloudmate</b></br>
+고양이 이미지 제공 서비스
+</div>
+
+
 
 ## 소개
 
