@@ -1,3 +1,4 @@
+// 묘종 리스트와 id값 -> selectbox, db요청, 상세정보 모달 내에서 사용
 export const breedList = [
   { id: "", name: "전체 보기" },
   { id: "abys", name: "Abyssinian" },

@@ -1,25 +1,23 @@
 import "./index.css";
-import Main from "./main";
+import Main from "./pages/main";
+import Page from "./pages/dev";
 import Router from "./utils/router";
 import Component from "./utils/common";
 import Header from "./component/Header";
 
-class Page extends Component {
-  template() {
-    return `
-      <h1>페이지2</h1>
-      `;
-  }
+interface StateInterface {
+  pages: {
+    [key:string]: () => Component
+  },
 }
 
-class App extends Component {
+// 프로젝트의 루트 컴포넌트
+class App extends Component<object, StateInterface> {
   setup() {
     this.state = {
-      components: {
-        SecretComponent: () =>
-          new Page(document.querySelector("[data-key='app']")),
-        MainComponent: () =>
-          new Main(document.querySelector("[data-key='app']")),
+      pages: {
+        TempPage: () => new Page(document.querySelector("[data-key='app']")),
+        MainPage: () => new Main(document.querySelector("[data-key='app']")),
       },
     };
   }
@@ -33,10 +31,10 @@ class App extends Component {
     new Header(document.querySelector("[data-key='header']"));
 
     const router = new Router();
-    const { MainComponent, SecretComponent } = this.state.components;
+    const { MainPage, TempPage } = this.state.pages;
 
-    router.addRoute({ path: "#/", component: MainComponent });
-    router.addRoute({ path: "#/secret", component: SecretComponent });
+    router.addRoute({ path: "#/", component: MainPage });
+    router.addRoute({ path: "#/dev", component: TempPage });
     router.start();
   }
 }
