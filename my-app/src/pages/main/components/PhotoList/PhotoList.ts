@@ -21,7 +21,7 @@ interface StateInterface {
 }
 
 class PhotoList extends Component<PropsInterface, StateInterface> {
-  observer: IntersectionObserver | undefined;
+  observer: IntersectionObserver | undefined = undefined;
   setup() {
     this.state = {
       images: [],
@@ -64,6 +64,7 @@ class PhotoList extends Component<PropsInterface, StateInterface> {
     });
 
     const handleInView = async (entries: IntersectionObserverEntry[]) => {
+      console.log('why');
       if (entries[0].isIntersecting) {
         const { breedId, keyword } = this.state;
         this.loadImages({

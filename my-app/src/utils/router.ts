@@ -1,11 +1,11 @@
-import Component from "./common";
+import Component from './common';
 
 interface RouteInterface {
   path: string;
   component: () => Component;
 }
 interface StateInterface {
-  routes: RouteInterface[]
+  routes: RouteInterface[];
 }
 // 페이지 라우팅용
 export default class Router extends Component<object, StateInterface> {
@@ -22,16 +22,17 @@ export default class Router extends Component<object, StateInterface> {
 
   // url을 통해 라우트를 찾는 메서드
   findRoute() {
-    if (!window.location.hash) window.location.href = "#/";
+    if (!window.location.hash) window.location.href = '#/';
     const foundRoute = this.state.routes.find(
       (route: RouteInterface) => route.path === window.location.hash
     );
-    if (foundRoute) foundRoute.component();
-    else window.location.href = "#/";
+    if (foundRoute) {
+      foundRoute.component();
+    } else window.location.href = '#/';
   }
 
   start() {
-    window.addEventListener("hashchange", () => this.findRoute());
+    window.addEventListener('hashchange', () => this.findRoute());
     this.findRoute();
   }
 }

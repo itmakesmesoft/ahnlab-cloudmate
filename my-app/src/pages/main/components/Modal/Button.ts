@@ -1,7 +1,7 @@
 const Button = ({
-  id = "",
-  className = "",
-  label = "",
+  id = '',
+  className = '',
+  label = '',
 }: {
   id?: string;
   className?: string;
