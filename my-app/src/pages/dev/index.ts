@@ -1,5 +1,5 @@
-import Component from "../../utils/common";
-import Main from "../main";
+import Component from '../../utils/common';
+import Main from '../main';
 
 // 라우팅을 테스트하기 위한 임시 페이지
 export default class Page extends Component {

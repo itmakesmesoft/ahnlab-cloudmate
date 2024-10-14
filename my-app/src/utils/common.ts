@@ -68,15 +68,12 @@ export const escapeFromXSS = (propValue?: string) => {
   return escaper.innerHTML;
 };
 
-// 디바운스(delay 시간 이후에 한 번만 callback 실행)
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const debounce = <T extends any[]>(
+export const debounce = <T extends unknown[]>(
+  // 디바운스(delay 시간 이후에 한 번만 callback 실행)
   callback: (...args: T) => void,
   delay = 1000
 ) => {
   let timer: NodeJS.Timeout | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (...args: T) => {
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
@@ -85,18 +82,14 @@ export const debounce = <T extends any[]>(
   };
 };
 // 쓰로틀링(callback 실행 후 delay 시간동안 같은 요청 무시)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// export const throttle = <T extends any[]>(
-//   callback: (...args: T) => void,
-//   delay = 1000
-// ) => {
-//   let timer: NodeJS.Timeout | null;
-//   return (...args: T) => {
-//     if (!timer) {
-//       callback(...args);
-//       timer = setTimeout(() => {
-//         timer = null;
-//       }, delay);
-//     }
-//   };
-// };
+let timer: NodeJS.Timeout | null;
+export const throttle = (
+  callback: (...args: unknown[]) => void,
+  delay = 1000
+) => {
+  if (timer) return;
+  callback();
+  timer = setTimeout(() => {
+    timer = null;
+  }, delay);
+};

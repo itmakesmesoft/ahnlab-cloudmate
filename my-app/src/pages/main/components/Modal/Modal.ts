@@ -1,29 +1,32 @@
-import Input from "./Input";
-import Button from "./Button";
-import TagList from "./TagList";
-import Component from "../../../../utils/common";
-import { breedList } from "../../../../utils/breeds";
-import { escapeFromXSS } from "../../../../utils/common";
+import Input from './Input';
+import Button from './Button';
+import TagList from './TagList';
+import Component from '../../../../utils/common';
+import { breedList } from '../../../../utils/breeds';
+import { escapeFromXSS } from '../../../../utils/common';
 import {
   ImageDataInterface,
   likePost,
   submitPost,
-} from "../../../../utils/firebase";
+} from '../../../../utils/firebase';
 
 interface StateInterface {
   originData: ImageDataInterface;
   isEdit: boolean;
   isLoadingLike: boolean;
-  formData: ImageDataInterface
+  formData: ImageDataInterface;
 }
-export default class Modal extends Component<ImageDataInterface, StateInterface> {
+export default class Modal extends Component<
+  ImageDataInterface,
+  StateInterface
+> {
   setup(): void {
     this.state = {
-      originData: { ...this.props || {} },
+      originData: { ...(this.props || {}) },
       isEdit: false,
       isLoadingLike: false,
       formData: {} as ImageDataInterface,
-    }
+    };
   }
 
   template(): string {
@@ -62,19 +65,19 @@ export default class Modal extends Component<ImageDataInterface, StateInterface>
   renderEditMode({ tags, title }: ImageDataInterface): string {
     return `
       <div class="px-6 pt-4 pb-6 flex flex-col justify-between">
-        ${Input({ id: "titleInput", value: title, placeholder: "제목을 입력해주세요.", label: "제목", className: "mb-4" })}
-        ${Input({ id: "tagInput", placeholder: "태그를 추가해주세요.", label: "태그", buttonId: "addTagButton", buttonLabel: "추가", className: "mb-2" })}
-        ${TagList({ id: "tagContainer", tags: tags, isRemoveable: true, className: "mb-6" })}
+        ${Input({ id: 'titleInput', value: title, placeholder: '제목을 입력해주세요.', label: '제목', className: 'mb-4' })}
+        ${Input({ id: 'tagInput', placeholder: '태그를 추가해주세요.', label: '태그', buttonId: 'addTagButton', buttonLabel: '추가', className: 'mb-2' })}
+        ${TagList({ id: 'tagContainer', tags: tags, isRemoveable: true, className: 'mb-6' })}
         <div class="grid grid-cols-2 gap-1">
-          ${Button({ id: "cancelEditButton", label: "취소" })}
-          ${Button({ id: "submitButton", label: "저장" })}
+          ${Button({ id: 'cancelEditButton', label: '취소' })}
+          ${Button({ id: 'submitButton', label: '저장' })}
         </div>
       </div>`;
   }
   // 게시글 좋아요 버튼 렌더링
   renderLikeButton({ isLiked, likesCount }: ImageDataInterface) {
     return LikeButton({
-      id: "likeButton",
+      id: 'likeButton',
       isLiked,
       count: likesCount,
       isLoading: this.state.isLoadingLike,
@@ -82,16 +85,16 @@ export default class Modal extends Component<ImageDataInterface, StateInterface>
   }
   // 모달 열기
   showModal() {
-    document.querySelector("#modalRoot")?.classList.add("active");
+    document.querySelector('#modalRoot')?.classList.add('active');
   }
   // 모달 닫기
   hideModal() {
-    document.querySelector("#modalRoot")?.classList.remove("active");
+    document.querySelector('#modalRoot')?.classList.remove('active');
   }
   // 게시글 정보 수정 제출
   submitImageInfo() {
     const titleInput = document.querySelector(
-      "#titleInput"
+      '#titleInput'
     ) as HTMLInputElement;
     const title = escapeFromXSS(titleInput.value);
     const formData = this.state.formData;
@@ -103,8 +106,8 @@ export default class Modal extends Component<ImageDataInterface, StateInterface>
   }
   // 태그 추가
   addTag() {
-    const input = document.querySelector("#tagInput") as HTMLInputElement;
-    const title = document.querySelector("#titleInput") as HTMLInputElement;
+    const input = document.querySelector('#tagInput') as HTMLInputElement;
+    const title = document.querySelector('#titleInput') as HTMLInputElement;
     const newTag = escapeFromXSS(input.value.trim());
     if (!newTag) return;
     const formData = this.state.formData;
@@ -115,13 +118,13 @@ export default class Modal extends Component<ImageDataInterface, StateInterface>
         tags: [...formData.tags, newTag],
       },
     });
-    input.value = "";
+    input.value = '';
   }
   // 태그 삭제
   removeTag = (e: Event) => {
     const target = e.target as HTMLSpanElement;
-    const title = document.querySelector("#titleInput") as HTMLInputElement;
-    const tagToRemove = target.closest("[data-tag]") as HTMLSpanElement;
+    const title = document.querySelector('#titleInput') as HTMLInputElement;
+    const tagToRemove = target.closest('[data-tag]') as HTMLSpanElement;
     if (!tagToRemove) return;
     const formData = this.state.formData;
     const index = formData.tags.indexOf(escapeFromXSS(tagToRemove.dataset.tag));
@@ -161,42 +164,42 @@ export default class Modal extends Component<ImageDataInterface, StateInterface>
   // 게시글 수정 시 태그 입력 이벤트
   handleTagInput(e: Event) {
     const event = e as KeyboardEvent;
-    if (event.key === "Enter") this.addTag();
+    if (event.key === 'Enter') this.addTag();
   }
   setEvents(): void {
     document
-      .querySelector("#addTagButton")
-      ?.addEventListener("click", this.addTag.bind(this));
+      .querySelector('#addTagButton')
+      ?.addEventListener('click', this.addTag.bind(this));
     document
-      .querySelector("#editPost")
-      ?.addEventListener("click", this.handleEditPost.bind(this));
+      .querySelector('#editPost')
+      ?.addEventListener('click', this.handleEditPost.bind(this));
     document
-      .querySelector("#cancelEditButton")
-      ?.addEventListener("click", this.handleCancelEdit.bind(this));
+      .querySelector('#cancelEditButton')
+      ?.addEventListener('click', this.handleCancelEdit.bind(this));
     document
-      .querySelector("#submitButton")
-      ?.addEventListener("click", this.submitImageInfo.bind(this));
+      .querySelector('#submitButton')
+      ?.addEventListener('click', this.submitImageInfo.bind(this));
     document
-      .querySelector("#likeButton")
-      ?.addEventListener("click", this.toggleLike.bind(this));
+      .querySelector('#likeButton')
+      ?.addEventListener('click', this.toggleLike.bind(this));
     document
-      .querySelector("#tagInput")
-      ?.addEventListener("keydown", this.handleTagInput.bind(this));
+      .querySelector('#tagInput')
+      ?.addEventListener('keydown', this.handleTagInput.bind(this));
     document
-      .querySelector("#tagContainer")
-      ?.addEventListener("click", this.removeTag.bind(this));
+      .querySelector('#tagContainer')
+      ?.addEventListener('click', this.removeTag.bind(this));
     document
-      .querySelector("#hideModal")
-      ?.addEventListener("click", this.hideModal.bind(this));
+      .querySelector('#hideModal')
+      ?.addEventListener('click', this.hideModal.bind(this));
     document
-      .querySelector("#modalOverlay")
-      ?.addEventListener("click", this.hideModal.bind(this));
+      .querySelector('#modalOverlay')
+      ?.addEventListener('click', this.hideModal.bind(this));
   }
 }
 
 // 좋아요 버튼
 const LikeButton = ({
-  id = "",
+  id = '',
   isLiked = false,
   isLoading = false,
   count,
@@ -208,9 +211,9 @@ const LikeButton = ({
 } = {}) => {
   return `
     <button id="${id}" class="flex flex-row gap-2 items-center group p-1">
-      <svg class="h-6 w-6 ${isLiked ? "text-red-500" : "text-gray-300"} fill-current group-hover:text-red-700" xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 16 16">
+      <svg class="h-6 w-6 ${isLiked ? 'text-red-500' : 'text-gray-300'} fill-current group-hover:text-red-700" xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 16 16">
         <path style="fill: inherit" d="M1.243 8.243 8 15l6.757-6.757a4.243 4.243 0 0 0 1.243-3v-.19A4.052 4.052 0 0 0 8.783 2.52L8 3.5l-.783-.98A4.052 4.052 0 0 0 0 5.053v.19c0 1.126.447 2.205 1.243 3Z"/>
       </svg>
-      ${isLoading ? "<span class='loader w-4 h-4'></span>" : count === undefined ? "" : count}
+      ${isLoading ? "<span class='loader w-4 h-4'></span>" : count === undefined ? '' : count}
     </button>`;
 };

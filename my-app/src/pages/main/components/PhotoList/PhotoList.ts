@@ -1,6 +1,6 @@
 import Modal from '../Modal/Modal';
 import Skeleton from '../Skeleton';
-import Component from '../../../../utils/common';
+import Component, { throttle } from '../../../../utils/common';
 import {
   getPost,
   getPosts,
@@ -21,7 +21,7 @@ interface StateInterface {
 }
 
 class PhotoList extends Component<PropsInterface, StateInterface> {
-  observer: IntersectionObserver | undefined;
+  observer: IntersectionObserver | undefined = undefined;
   setup() {
     this.state = {
       images: [],
@@ -64,6 +64,7 @@ class PhotoList extends Component<PropsInterface, StateInterface> {
     });
 
     const handleInView = async (entries: IntersectionObserverEntry[]) => {
+      console.log('why');
       if (entries[0].isIntersecting) {
         const { breedId, keyword } = this.state;
         this.loadImages({
@@ -88,19 +89,21 @@ class PhotoList extends Component<PropsInterface, StateInterface> {
   // 이미지를 불러오는 메서드
   async loadImages(props: { breedId?: string; keyword?: string }) {
     if (this.state.isLoading) return;
-    this.setState({ ...this.state, isLoading: true });
-    const data = await getPosts({ ...props });
-    if (data) {
-      const images = [...this.state.images, ...data];
-      const isEnded = data.length === 0 ? true : false;
-      const isLoading = false;
-      return this.setState({
-        ...this.state,
-        isLoading,
-        isEnded,
-        images,
-      });
-    }
+    throttle(async () => {
+      this.setState({ ...this.state, isLoading: true });
+      const data = await getPosts({ ...props });
+      if (data) {
+        const images = [...this.state.images, ...data];
+        const isEnded = data.length === 0 ? true : false;
+        const isLoading = false;
+        return this.setState({
+          ...this.state,
+          isLoading,
+          isEnded,
+          images,
+        });
+      }
+    }, 500);
   }
 
   // 모달을 렌더링하는 메서드
