@@ -72,14 +72,14 @@
 
 ### 로딩 스피너 및 스켈레톤 UI
 
-[사진]![스켈레톤 ui](https://github.com/user-attachments/assets/c4f86c85-3130-4fce-8ab0-a7498ffd88cf)
+![스켈레톤 ui](https://github.com/user-attachments/assets/c4f86c85-3130-4fce-8ab0-a7498ffd88cf)
 
 - 페이지를 첫 렌더링하기 이전, 비동기적으로 데이터를 불러오는 시점에 스켈레톤 UI 표시
 - 페이지를 마운트 한 이후, 비동기적으로 데이터를 불러오는 시점에 사용자에게 로딩 스피너 표시
 
 ### Debounce 적용
 
-[사진]![디바운싱](https://github.com/user-attachments/assets/75464f82-ffbb-436b-98e4-db054cd74df4)
+![디바운싱](https://github.com/user-attachments/assets/75464f82-ffbb-436b-98e4-db054cd74df4)
 
 - 검색창에 태그를 입력하고 엔터를 누르지않은 상태로 2초동안 입력이 없는 경우, 검색 결과가 나오도록 debounce 적용
 
