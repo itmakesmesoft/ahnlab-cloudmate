@@ -8,9 +8,10 @@
 
 
 ## 소개
-
 <strong>Catstagram</strong>은 고양이 이미지를 종류별로 필터링하거나 태그를 통해 검색할 수 있고, 게시글에 좋아요를 누르거나 제목과 태그를 작성할 수 있으며, PC뿐 아니라 모바일과 같은 다양한 기기에 대응하도록 구현하였습니다.</br>
-디자인 작업은 <strong>TailwindCSS</strong>를 활용해 진행했고, <strong>Webpack</strong>을 사용하여 번들링하였습니다. 데이터베이스 구축과 호스팅은 <strong>Firebase</strong>를 통해 진행했습니다.
+디자인 작업은 <strong>TailwindCSS</strong>를 활용해 진행했고, <strong>Webpack</strong>을 사용하여 번들링하였습니다. 데이터베이스 구축과 호스팅은 <strong>Firebase</strong>를 통해 진행했습니다. </br>
+
+<ins>_본 프로젝트는 별도의 라이브러리나 프레임워크의 도움을 받지 않고 순수 자바스크립트로 개발한 프로젝트입니다._<ins>
 
 ## 배포 링크
 
