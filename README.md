@@ -1,6 +1,6 @@
 
 <div align="center">
-<h1>🐈 Catstagram</h1>
+<h1>🐈 Catstagram (Vanila JS 프로젝트)</h1>
 <b>for Ahnlab Cloudmate</b></br>
 고양이 이미지 제공 서비스
 </div>
