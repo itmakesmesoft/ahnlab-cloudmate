@@ -24,9 +24,9 @@
 2. [구현사항](#2-구현사항)
 3. [빠르게 훑어보는 개발 여정](#3-빠르게-훑어보는-개발-여정)
 4. [사용한 기술 스택 및 선정 이유](#4-사용한-기술-스택-및-선정-이유)
-5. [고민했던 부분들](#5-7-고민했던-부분-아쉬운-부분-트러블-슈팅)
-6. [아쉬운 부분](#5-7-고민했던-부분-아쉬운-부분-트러블-슈팅)
-7. [트러블 슈팅](#5-7-고민했던-부분-아쉬운-부분-트러블-슈팅)
+5. [고민했던 부분들](#5-고민했던-부분)
+6. [트러블 슈팅](#6-트러블-슈팅)
+7. [아쉬운 부분](#7-아쉬운-부분)
    </br></br>
 
 ---
@@ -190,8 +190,317 @@ Webpack은 기본적으로 JavaScript와 JSON 파일만 번들링하므로, 다�
 
 </br></br>
 
-# 5-7. 고민했던 부분, 아쉬운 부분, 트러블 슈팅
+# 5. 고민했던 부분
 
-아래 링크로 이동하시면 자세한 과제 후기를 보실 수 있습니다.
+## 재사용성과 DX에 대한 고민
 
-### [노션 링크](https://itmakesmesoft.notion.site/118dbad75ce680d9b38cf36911afe90e?pvs=4)
+프로젝트 초기부터 컴포넌트 기반으로 코드를 분리하는 것을 목표로 했습니다. 이는 코드의 재사용성을 높이고 가독성을 향상시킬 수 있기 때문입니다.
+
+하지만 초반부터 컴포넌트 패턴 구현에 시간을 쏟다보면 나중에 기능구현에 시간에 쫒길 수 있으니, 아래와 같이 우선순위를 정하고, 추후에 리팩토링하는 것이 낫겠다 판단했습니다.
+
+<aside>
+📌
+
+1. 기능 구현
+2. 컴포넌트 패턴 도입
+3. 성능 개선 및 최적화
+</aside>
+
+## 코드가 너무 난잡해
+
+모든 엘리먼트를 `document.createElement`로 작성하다 보니 코드가 난잡해지고 가독성이 떨어지는 문제가 발생했습니다
+
+그렇다고 해서 가독성이 좋은 문자열 형태로 html 태그 작성하고, DOM에 주입하기에는 보안적인 요소에 대한 걱정이 컸습니다. 컴포넌트 패턴을 직접 구현하신 다른 개발자분들께서는 문자열로 작성된 요소를 `innerHTML`로 주입하는 방식을 사용하지만, 이 경우 사용자 입력에 대한 이스케이핑 처리를 하지 않으면 XSS(교차 사이트 스크립팅) 공격에 노출될 위험이 있었습니다. 
+
+저는 그래서 `document.createElement`를 보다 쉽게 간소화한 `createElement`라는 함수를 만들었습니다.
+
+```jsx
+export const createElement = (tag, props = {}, ...children) => {
+  const element = document.createElement(tag);
+  const properties = Object.entries({ ...props });
+  if (props) {
+    properties.forEach(([key, value]) => {
+      if (key.slice(0, 2) === "on") {
+        // onclick, onmouseover와 같은 DOM 이벤트를 addEventListener에 담기 위함
+        const event = key.slice(2).toLowerCase();
+        element.addEventListener(event, value);
+      } else {
+        element.setAttribute(key, value);
+      }
+    });
+  }
+  children.forEach((child) => {
+    if (!child) return;
+    if (typeof child === "string") {
+      element.appendChild(document.createTextNode(child));
+    } else {
+      element.appendChild(child);
+    }
+  });
+  return element;
+};
+```
+
+`createElement()`를 사용하면 태그 타입을 지정하고, 인자로 요소의 속성값과 이벤트 등을 객체 형태로 주입할 수 있습니다. 또한 `children`을 세 번째 인자로 children을 받아 하위 요소를 한 번에 지정할 수 있도록 했습니다.
+
+```jsx
+const submitButton = createElement("button", {onclick: () => console.log("안녕")})
+```
+
+## Webpack 도입
+
+프로젝트에서 여러 개의 스크립트 파일을 사용하다 보니, 네트워크를 통해 개별적으로 요청해야 해 비효율적이었습니다. 그렇다고 해서 모든 코드를 하나의 스크립트 파일에 포함시키면 가독성이 떨어지고 유지보수가 어려워지는 문제가 있습니다.
+웹팩은 자바스크립트 뿐만 아니라 웹서비스를 구성하는데 필요한 리소스를 모두 하나의 번들파일로 묶어 관리할 수 있다는 장점이 있어 도입하게 되었습니다.
+
+## 결국 innerHTML을 사용해야 하나
+
+개발을 진행하며 코드가 길어지다보니, 아무리 `createElement()`를 사용해 간단하게 엘리먼트를 만들더라도 DOM의 계층 구조를 한눈에 파악하기는 힘들다는 단점이 있었습니다.
+
+예를 들면, `form`을 만드는 데에도 아래와 같이 필요한 코드가 많고, 복잡하게 얽혀 있어 한눈에 들어오지 않았습니다.
+
+```jsx
+const fragment = document.createDocumentFragment()
+const input = createInput({
+  type: "text",
+  value: title,
+  label: "제목",
+  id: "titleInput",
+});
+const tagInput = createTagInput({
+  tags: tags,
+  label: "태그",
+  id: "tagInput",
+});
+const submitBtn = createInput({
+  type: "button",
+  value: "추가",
+  onclick: () => submitInfo(id),
+});
+const closeBtn = createInput({
+  type: "button",
+  value: "닫기",
+  onclick: closeModal,
+});
+const likeBtn = createInput({
+  type: "button",
+  value: "Like",
+  onclick: () => likePost(id),
+});
+const form = createElement("form", { id: "form" });
+form.append(input, tagInput, submitBtn, closeBtn, likeBtn);
+fragment.append(img, h3, form);
+```
+
+결국 문자열 형태로 마크업을 작성하고 DOM에 주입하는 방식을 선택하게 되었습니다. 하지만 이 과정에서 `innerHTML`의 성능 문제가 있다는 점을 간과했던 것 같습니다.
+
+회고를 작성하는 지금에서야, `insertAdjacentHTML`로 변경하면 성능을 더욱 개선할 수 있다는 것을 알게 되었지만, 지금 변경을 시도하면 많은 부분에서 수정이 필요할 것 같아 마감 시간 안에 반영하기 어려울 것 같습니다. 그래서 아쉽게도 이 변경 사항을 적용하지 못했습니다.
+
+[Element: insertAdjacentHTML() 메서드 - Web API | MDN](https://developer.mozilla.org/ko/docs/Web/API/Element/insertAdjacentHTML)
+
+## 라이프사이클 도입
+
+컴포넌트를 분리하여 개발하는 과정에서, props를 통해 데이터를 받고 이를 렌더링한 뒤 이벤트를 바인딩하기 위해 React와 유사한 라이프사이클을 설정해야 했습니다.
+
+예를 들어, 사용자와의 상호작용을 구현하려면 렌더링 전후의 시점과 이벤트 바인딩의 타이밍을 명확히 구분해야 했습니다. 값이 업데이트되는 경우, 초기 렌더링과는 다른 동작을 구현해야 했습니다.
+
+이를 위해 라이프사이클을 다음과 같이 나누어 진행했습니다:
+
+<aside>
+🔗
+
+**Component 클래스 메서드**
+
+- **setup**: 초기 설정 수행
+- **render (private)**: 컴포넌트 렌더링 담당
+- **mounted**: 첫 렌더링이 완료된 후 호출
+- **update (private)**: 컴포넌트를 업데이트하는 내부 메서드
+- **setEvents**: HTML 태그에 이벤트를 바인딩하는 메서드로, `render`가 완료된 뒤 호출
+- **setState**: 컴포넌트 내부 상태를 설정하는 메서드로, 상태 변경 시 `update`가 실행
+- **beforeUpdate**: 마운트 이후 첫 번째 업데이트가 실행되기 전 호출
+- **afterUpdate**: 마운트 이후 업데이트가 실행되면  `render`와 `setEvents` 호출 뒤에 실행
+- **unMount**: 컴포넌트가 종료되기 전 동작을 정의하기 위한 메서드
+</aside>
+
+`update` 메서드는 컴포넌트 인스턴스가 생성된 후 `setup`이 완료되면 즉시 실행되도록 하였고, 내부에서 `isMounted` 클래스 변수를 사용하여 마운트 여부에 따라 각 라이프사이클의 동작을 구분하였습니다.
+
+```tsx
+class Component {
+  parent: Element | null | undefined;
+  props: any;
+  state: any = {};
+  isMounted: boolean = false;
+  
+  constructor(parent?: Element | null, props?: any) {
+    this.parent = parent;
+    this.props = props;
+    this.setup();
+    this.update();
+  }
+  private update() {
+    if (!this.isMounted) {
+      this.render();
+      this.setEvents();
+      this.mounted();
+      this.isMounted = true;
+    } else {
+      this.beforeUpdate();
+      this.render();
+      this.setEvents();
+      this.afterUpdate();
+    }
+  }
+  private render() {
+    if (this.parent) {
+      this.parent.innerHTML = this.template();
+    }
+  }
+  setup() {}
+  mounted() {}
+  beforeUpdate() {}
+  afterUpdate() {}
+  **unMount**() {}
+  template() {
+    return ``;
+  }
+  setEvents() {}
+  setState(newState: any) {
+    if (JSON.stringify(this.state) !== JSON.stringify(newState)) {
+      // 상태가 변경되었을 때만 render 호출
+      this.state = { ...this.state, ...newState };
+      this.update();
+    }
+  }
+}
+```
+
+이와 별개로, `innerHTML`을 DOM에 주입하면서 발생될 수 있는 XSS 공격에 대비하기 위해 `input`값을 텍스트로 변환하여 `innerHTML`에 표시되지 않도록 처리하는 함수를 만들었습니다.
+
+```jsx
+export const escapeFromXSS= (propValue) => {
+  const escaper = document.createElement("div");
+  escaper.textContent = propValue;
+  return escaper.innerHTML;
+};
+
+const target = document.querySelector("#input");
+if (target) {
+	const value = escapeFromXSS(target.value);
+}
+```
+
+## API 정보 Database로 이관
+
+기존에는 이미지를 The Cat API에서 가져오고, 이미지에 대한 정보는 별도의 Database에서 요청하는 방식으로 구현되어 있었습니다. 그러나 이러한 방식은 요청 로직이 복잡해지고, 두 번씩 요청을 해야 하는 비효율적인 문제가 있었습니다.
+
+The Cat API가 사진 URL을 제공하는 점을 고려하여, 이 URL을 Database에 저장한 후, Database에서 이미지 정보와 사진을 동시에 불러오도록 변경하는 것이 더 효율적이라고 판단했습니다.
+
+## 파이썬 크롤링
+
+The Cat API의 사진 정보를 가져오기 위해 **Python**을 활용하였습니다. **requests** 라이브러리를 사용해 API 요청을 진행했으며, 데이터가 중간에 소실될 가능성을 대비해 **파일로 저장**해두었습니다.
+
+이를 위해 The Cat API에서 제공하는 고양이 종류에 대한 **키-값 (key-value) 쌍**을 미리 받아두었고, 각 고양이 종류마다 100개의 데이터를 가져오도록 코드를 작성했습니다.
+
+API 요청 시 한 번에 가져올 수 있는 데이터의 양이 제한되어 있었기 때문에, **각 고양이 종류별로 10번씩 요청**을 보내는 방식으로 작업을 진행했습니다. 
+
+```python
+def get_images(breed_list):
+  for item in breed_list:
+    result = []
+    for _ in range(10):
+      response = requests.get(API_HOST)
+      data = response.json()
+      result += data
+	save_array_as_file(result)
+```
+
+---
+
+# 6. 트러블 슈팅
+
+## 무한 스크롤 개발 과정에서 발생한, 무한 렌더링
+
+- **상황**
+    - 컴포넌트 패턴으로 변경 후 무한스크롤을 적용하자 렌더링이 무한 반복되는 문제가 발생.
+- **원인**
+    - `IntersectionObserver`의 entry가 교차되면 비동기 작업(`loadImages()`)이 이루어지고, 그 결과를 setState를 이용해 저장하게 됨
+    - 이때, 상태 변경이 이루어지면 다시 `render → setEvents → beforeUpdate → afterUpdate` 순으로 작업이 이루어지는데, 이떄 `IntersectionObserver`가 다시 엘리먼트를 감지하며 무한 렌더링에 빠지게 된 것.
+- **해결 방법**
+    - 비동기 작업의 진행 상태를 따로 두고, `isLoading` 상태가 `true`일 때, 즉 비동기 작업이 진행 중일 경우에는 비동기 함수가 호출되더라도 즉시 리턴되도록 조건을 추가하여 무한 렌더링을 방지.
+        
+        ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/2ef143a0-74da-495a-a9a6-7f1e404d2de9/13cb417b-710b-4920-a9d3-534bbabe6f47/image.png)
+        
+
+## CORS 에러
+
+- **상황**
+    - HTML 파일에서 `index.js`를 불러오려 하자 아래와 같은 CORS(Cross-Origin Resource Sharing) 에러가 발생
+    - Cross origin from origin 'null' has been blocked by CORS policy
+        
+        ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/2ef143a0-74da-495a-a9a6-7f1e404d2de9/2e902ec4-a166-459c-a20f-5d52d4d46c30/image.png)
+        
+        ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/2ef143a0-74da-495a-a9a6-7f1e404d2de9/81f40ee8-200f-4370-b1b4-e10172e39f2c/image.png)
+        
+- **원인** :
+    - type을 module로 설정한<script> 태그가 포함된 HTML 파일을 로컬에서 로드할 경우 자바스크립트 모듈 보안 요구사항으로 인해 CORS 오류가 발생
+    - 로컬의 리소스를 요청할 때에는 출처(Origin)가 `null`이 되어 SOP 정책에 위배
+        - Origin = 프로토콜 + 호스트 + 포트
+- **해결 방법:**
+    - VSCode에서 live server 확장팩 설치 후 실행하면 http 프로토콜을 통해 접근 가능
+        
+        ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/2ef143a0-74da-495a-a9a6-7f1e404d2de9/a548cd91-92cb-48c4-b0f8-2132e4f7e886/image.png)
+        
+        [로컬에서 CORS policy 관련 에러가 발생하는 이유](https://takeknowledge.tistory.com/151)
+        
+
+## Firestore 페이징 처리
+
+- **상황:**
+    - Firestore에서 게시글 목록을 페이징 처리하는 기능을 구현하려 했으나, 동일한 페이지를 여러 번 불러오는 문제가 발생
+    - 이로 인해 스크롤을 내릴 때 중복된 데이터가 반복해서 출력되는 현상이 나타남
+        
+        ```tsx
+        export const getPosts = async ({
+        
+          page = 0,
+          limitValue = 9,
+        }: {
+          page?: number;
+          limitValue?: number;
+        }) => {
+          let q = query(collection(database, "cats"));
+        	...
+          q = query(
+            q,
+            startAt(page * limitValue),
+            limit(limitValue)
+          );
+          const documentSnapshots = await getDocs(q);
+        	...
+        };
+        ```
+        
+- **원인:**
+    - Firestore의 `startAt`에는 문서가 들어가야 하는데, 숫자를 넣어버렸기 때문
+- **해결**
+    - 숫자가 아닌 마지막 문서를 기준으로 다음 페이지를 가져오는 방식으로 변경
+    - `startAfter`를 사용하여 이전 페이지의 마지막 문서 이후부터 새로운 데이터를 불러오도록 처리하여 문제를 해결
+
+---
+
+# 7. 아쉬운 부분
+
+### Git commit
+
+과제 초기 단계에서 기능 구현에 집중하다 보니 Git 커밋을 적절히 진행하지 못한 점이 아쉽습니다. 다음에는 커밋 관리를 더욱 철저히 하여 코드 변경 사항을 명확히 기록하도록 하겠습니다.
+
+### 데이터 크롤링
+
+The Cat API에서 이미지를 크롤링할 때, 작은 사이즈의 이미지를 가져오지 못해 아쉬움이 남습니다. 이로 인해 사진 로드 시간이 길어져 사용자 경험에 부정적인 영향을 미쳤습니다. 앞으로는 이미지의 사이즈를 미리 확인하고 최적화하여 이러한 문제를 예방하도록 하겠습니다.
+
+### DOM 처리
+
+`innerHTML`을 사용하면 DOM 파싱이 다시 이루어져 기존에 바인딩된 이벤트가 사라지는 문제가 발생했습니다. 이로 인해 `update` 단계에서 다시 이벤트를 설정하는 `setEvents` 메서드를 컴포넌트의 라이프사이클에 구현해야 했습니다. `insertAdjacentHTML`을 활용하면 이러한 문제를 피할 수 있다는 점을 회고를 통해 깨달았습니다. 현재 시점에서 이를 수정하기에는 시간이 부족해 아쉬움이 남지만, 앞으로는 이러한 상황을 미리 고려하여 보다 효율적인 DOM 처리 방법을 적용할 수 있도록 하겠습니다.
+
+### 보안적 측면
+
+사용자 입력을 문자열로 변환하여 `innerHTML`로 DOM에 주입했지만, DB에 저장할 때 입력값에 대한 이스케이핑을 놓친 점이 아쉽습니다. 지금이라도 수정하고 싶지만, 마감 시간이 촉박해 반영할 수 없는 상황이 되어 아쉬움이 남습니다. 앞으로는 입력값 이스케이핑을 놓쳤더라도, Axios 인터셉터를 활용하여 데이터 전송 단계에서 필터링하는 방안을 적용해 볼 계획입니다. 이를 통해 보안을 강화하고 더욱 안전한 코드를 구현할 수 있도록 하겠습니다.
