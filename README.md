@@ -295,7 +295,7 @@ fragment.append(img, h3, form);
 
 회고를 작성하는 지금에서야, `insertAdjacentHTML`로 변경하면 성능을 더욱 개선할 수 있다는 것을 알게 되었지만, 지금 변경을 시도하면 많은 부분에서 수정이 필요할 것 같아 마감 시간 안에 반영하기 어려울 것 같습니다. 그래서 아쉽게도 이 변경 사항을 적용하지 못했습니다.
 
-[Element: insertAdjacentHTML() 메서드 - Web API | MDN](https://developer.mozilla.org/ko/docs/Web/API/Element/insertAdjacentHTML)
+[MDN](https://developer.mozilla.org/ko/docs/Web/API/Element/insertAdjacentHTML)
 
 ## 라이프사이클 도입
 
@@ -427,18 +427,16 @@ def get_images(breed_list):
 - **해결 방법**
     - 비동기 작업의 진행 상태를 따로 두고, `isLoading` 상태가 `true`일 때, 즉 비동기 작업이 진행 중일 경우에는 비동기 함수가 호출되더라도 즉시 리턴되도록 조건을 추가하여 무한 렌더링을 방지.
         
-        ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/2ef143a0-74da-495a-a9a6-7f1e404d2de9/13cb417b-710b-4920-a9d3-534bbabe6f47/image.png)
-        
+        ![image](https://github.com/user-attachments/assets/a92eda1a-b71c-453c-9576-5dbbcaaaa8d5)
 
 ## CORS 에러
 
 - **상황**
     - HTML 파일에서 `index.js`를 불러오려 하자 아래와 같은 CORS(Cross-Origin Resource Sharing) 에러가 발생
     - Cross origin from origin 'null' has been blocked by CORS policy
-        
-        ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/2ef143a0-74da-495a-a9a6-7f1e404d2de9/2e902ec4-a166-459c-a20f-5d52d4d46c30/image.png)
-        
-        ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/2ef143a0-74da-495a-a9a6-7f1e404d2de9/81f40ee8-200f-4370-b1b4-e10172e39f2c/image.png)
+        ![image](https://github.com/user-attachments/assets/fe5331cf-aca3-420a-94e1-4efc60bf5db2)
+
+        ![image](https://github.com/user-attachments/assets/f3d649f8-6725-4d49-9453-e06aadb9b68a)
         
 - **원인** :
     - type을 module로 설정한<script> 태그가 포함된 HTML 파일을 로컬에서 로드할 경우 자바스크립트 모듈 보안 요구사항으로 인해 CORS 오류가 발생
@@ -446,9 +444,8 @@ def get_images(breed_list):
         - Origin = 프로토콜 + 호스트 + 포트
 - **해결 방법:**
     - VSCode에서 live server 확장팩 설치 후 실행하면 http 프로토콜을 통해 접근 가능
-        
-        ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/2ef143a0-74da-495a-a9a6-7f1e404d2de9/a548cd91-92cb-48c4-b0f8-2132e4f7e886/image.png)
-        
+        ![image](https://github.com/user-attachments/assets/6d843aa4-6f73-4ce3-b733-f416d1858a1e)
+
         [로컬에서 CORS policy 관련 에러가 발생하는 이유](https://takeknowledge.tistory.com/151)
         
 
